@@ -3,6 +3,16 @@ export const Colors = {
   secondary: '#927bc0e0',
   warning: '#cc475a',
 
+  white: {
+
+    navBackground: 'rgb(233, 228, 241)',
+  },
+
+  pink : {
+    navBackground: 'rgb(190, 58, 179)',
+
+  },
+
   light: {
     text: '#250561ff',
     title: '#220e47ff',
@@ -14,6 +24,7 @@ export const Colors = {
     uiBackground: '#7c649cff',
   },
   dark: {
+
     text: '#d4d4d4',
     title: '#fff',
     background: '#2e2658ff',

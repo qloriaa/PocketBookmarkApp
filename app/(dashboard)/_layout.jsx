@@ -8,16 +8,23 @@ import UserOnly from "../../components/auth/UserOnly";
 
 // Themed imports
 import { Colors } from "../../constants/Colors";
+import { useUser } from "../../hooks/UseUser";
+import { UserProvider } from "../../contexts/UserContext";
 
 const DashboardLayout = () => {
+  
   // Hook to get device color scheme (light/dark), and select appropriate theme, default to light
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme] ?? Colors.light;
+  
 
+  
   return (
-    <UserOnly>
+    <UserOnly >
       {/* Protects all dashboard routes from unauthorized access */}
       {/* Tab navigator for dashboard sections */}
+
+      
       <Tabs
         screenOptions={{
           headerShown: false,

@@ -29,7 +29,7 @@ const ThemedView = ({ style, safe = false, ...props }) => {
     <SafeAreaView
       style={[
         {
-          backgroundColor: theme.background,
+          backgroundColor: theme.pink?.background || theme.background,
           paddingTop: insets.top,
           paddingBottom: insets.bottom,
           paddingLeft: insets.left,

@@ -19,31 +19,27 @@ export function BooksProvider({ children }) {
   const { user } = useUser();
 
   // GET ALL BOOKS
-  async function fetchBooks() {
+  async function fetchBooks(sortByOption) {
     try {
       const booksList = await databases.listDocuments(
         DATABASE_ID,
         BOOKS_COLLECTION_ID,
         // Only fetch books belonging to the logged-in user
-        [Query.equal("userId", user.$id)]
+        [Query.equal("userId", user.$id), Query.orderAsc(sortByOption)],
       );
       setBooks(booksList.documents);
-
     } catch (error) {
       console.error("Error fetching books:", error);
     }
   }
   // GET BOOKS BY BOOKSHELF
-  async function fetchBookByBookshelf(bookshelf) {
-    try {    
+  async function fetchBookByBookshelf(bookshelf, sortByOption ) {
+    try {
       const booksList = await databases.listDocuments(
         DATABASE_ID,
         BOOKS_COLLECTION_ID,
         // Fetch books by bookshelf and belonging to the logged-in user
-        [
-          Query.equal("bookshelf", bookshelf),
-          Query.equal("userId", user.$id)
-        ]
+        [Query.equal("bookshelf", bookshelf), Query.equal("userId", user.$id), Query.orderAsc(sortByOption)],
       );
       setBooks(booksList.documents);
     } catch (error) {
@@ -51,13 +47,14 @@ export function BooksProvider({ children }) {
     }
   }
 
+
   // GET BOOK BY ID
   async function fetchBookById(bookId) {
     try {
       const book = await databases.getDocument(
         DATABASE_ID,
         BOOKS_COLLECTION_ID,
-        bookId
+        bookId,
       );
       return book;
     } catch (error) {
@@ -81,9 +78,8 @@ export function BooksProvider({ children }) {
           Permission.read(Role.user(user.$id)),
           Permission.update(Role.user(user.$id)),
           Permission.delete(Role.user(user.$id)),
-        ]
+        ],
       );
-
     } catch (error) {
       console.error("Error creating book:", error);
     }
@@ -92,14 +88,13 @@ export function BooksProvider({ children }) {
   // UPDATE BOOK
   async function updateBook(bookId, updatedData) {
     try {
-        // Update book logic here
-        const updatedBook = await databases.updateDocument(
-          DATABASE_ID,
-          BOOKS_COLLECTION_ID,
-          bookId,
-          updatedData
-        );
-        
+      // Update book logic here
+      const updatedBook = await databases.updateDocument(
+        DATABASE_ID,
+        BOOKS_COLLECTION_ID,
+        bookId,
+        updatedData,
+      );
     } catch (error) {
       console.error("Error updating book:", error);
     }
@@ -135,7 +130,7 @@ export function BooksProvider({ children }) {
         // Update local list when book is deleted
         if (events[0].includes("delete")) {
           setBooks((prevBooks) =>
-            prevBooks.filter((book) => book.$id !== payload.$id)
+            prevBooks.filter((book) => book.$id !== payload.$id),
           );
         }
 
@@ -143,9 +138,9 @@ export function BooksProvider({ children }) {
         if (events[0].includes("update")) {
           setBooks((prevBooks) => {
             return prevBooks.map((book) =>
-              book.$id === payload.$id ? payload : book
+              book.$id === payload.$id ? payload : book,
             );
-          }); 
+          });
         }
       });
     } else {
@@ -167,7 +162,7 @@ export function BooksProvider({ children }) {
         createBook,
         updateBook,
         deleteBook,
-        fetchBookByBookshelf,
+        fetchBookByBookshelf, 
       }}
     >
       {children}
