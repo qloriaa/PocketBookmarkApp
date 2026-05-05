@@ -12,11 +12,12 @@ import Spacer from "../../components/Spacer";
 import ThemedView from "../../components/ThemedView";
 import ThemedText from "../../components/ThemedText";
 import ThemedButton from "../../components/ThemedButton";
+import ThemedCard from "../../components/ThemedCard";
 
 const Profile = () => {
   // Get user and logout function from useUser hook (UserContext)
   const { logout, user } = useUser();
-  const { books, fetchBookByBookshelf, fetchBooks } = useBooks();
+  const { library, fetchBooks } = useBooks();
   const [all, setAll] = useState(0);
 
   useEffect(() => {
@@ -25,21 +26,15 @@ const Profile = () => {
     };
   }, []);
 
-  const getReadCount = books.filter(book =>
-    book.bookshelf.includes("READ")
-  )
+  const getReadCount = library.filter((book) => book.bookshelf.includes("READ"));
 
-  const getTBRCount = books.filter(book =>
-    book.bookshelf.includes("TBR")
-  )
+  const getTBRCount = library.filter((book) => book.bookshelf.includes("TBR"));
 
-  const getDNFCount = books.filter(book =>
-    book.bookshelf.includes("DNF")
-  )
+  const getDNFCount = library.filter((book) => book.bookshelf.includes("DNF"));
 
   const totalPages = getReadCount.reduce((sum, book) => {
     return sum + book.pageCount;
-  }, 0)
+  }, 0);
 
   return (
     <ThemedView style={styles.container} safe={true}>
@@ -51,23 +46,38 @@ const Profile = () => {
         <ThemedText title={true} style={styles.heading}>
           {user.name}'s Library
         </ThemedText>
+
         <Spacer />
 
-        <ThemedText>Total Books : {Object.entries(books).length}</ThemedText>
-        <Spacer/>
+        <ThemedCard>
+          <ThemedText>Total Books : {Object.entries(library).length}</ThemedText>
+        </ThemedCard>
+
+        <ThemedCard>
+          <ThemedText>
+            Read Books Count : {Object.keys(getReadCount).length}{" "}
+          </ThemedText>
+        </ThemedCard>
+
+        <ThemedCard>
+          <ThemedText>
+            TBR Books Count : {Object.keys(getTBRCount).length}
+          </ThemedText>
+        </ThemedCard>
+
+        <ThemedCard>
+          <ThemedText>
+            DNF Books Count : {Object.keys(getDNFCount).length}
+          </ThemedText>
+        </ThemedCard>
+
+        <ThemedCard>
+          <ThemedText>Total Pages Read: {totalPages}</ThemedText>
+        </ThemedCard>
+
+        <Spacer />
+        <Spacer />
         
-        <ThemedText>Read Books Count : {Object.keys(getReadCount).length} </ThemedText>
-        <Spacer/>
-
-        <ThemedText>TBR Books Count : {Object.keys(getTBRCount).length}</ThemedText>
-        <Spacer/>
-
-        <ThemedText>DNF Books Count : {Object.keys(getDNFCount).length}</ThemedText>
-        <Spacer/>   
-
-        <ThemedText>Total Pages Read: {totalPages}</ThemedText>
-        <Spacer/>
-
         <ThemedButton onPress={logout}>
           <ThemedText style={{ color: "#f2f2f2" }}>Logout</ThemedText>
         </ThemedButton>
@@ -94,5 +104,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
-  },
+  }
 });

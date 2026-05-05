@@ -4,7 +4,6 @@ import {ID } from "react-native-appwrite"
 
 // Access appwrite database and table
 import { account } from "../lib/appwrite"
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry"
 
 // Create User Context to manage user authentication state and actions
 export const UserContext = createContext()
@@ -17,6 +16,7 @@ export function UserProvider({ children }) {
 
     const [colorTheme, setColorTheme] = useState()
 
+    // Initialize session 
     async function login(email, password) {
 
         try {
@@ -28,6 +28,7 @@ export function UserProvider({ children }) {
         }   
     }
 
+    // Create new user an update auth database
     async function register(name, email, password) {
         try {
             const newUser = await account.create({
@@ -57,6 +58,7 @@ export function UserProvider({ children }) {
         }   
     }
 
+    // Delete/End session
     async function logout() {
         try {
             await account.deleteSession("current")
@@ -83,6 +85,7 @@ export function UserProvider({ children }) {
 
     }
 
+    // Access user preferences
     const getUserPreferences = async () => {
     try {
         // Returns a JSON object containing the user's custom fields
@@ -98,7 +101,6 @@ export function UserProvider({ children }) {
         console.error('Error fetching preferences:', error.message);
     }
 }
-
     async function updateUserPreferences({
         
     }) {
@@ -109,7 +111,6 @@ export function UserProvider({ children }) {
         console.error('Error updating preferences:', error.message);
     }
 }
-
 
     useEffect(() => {
         getInitialUserValues()

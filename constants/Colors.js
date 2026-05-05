@@ -30,7 +30,7 @@ export const Colors = {
     background: '#2e2658ff',
     navBackground: '#201e2bff',
     cardBackground: '#433f5eff',
-    iconColor: '#9591a5',
+    iconColor: '#786e9e',
     iconColorFocused: '#fff',
     uiBackground: '#2f2b3d',
   }

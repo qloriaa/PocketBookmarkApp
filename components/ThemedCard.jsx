@@ -22,8 +22,16 @@ const ThemedCard = ({ Style, ...props }) => {
 export default ThemedCard;
 
 const styles = StyleSheet.create({
+  
   card: {
-    padding: 20,
-    borderRadius: 5,
+    width: "90%",
+    marginHorizontal: "5%",
+    marginVertical: 10,
+    padding: 10,
+    paddingLeft: 15,
+    paddingBottom: 15,
+    borderLeftColor: Colors.primary,
+    borderLeftWidth: 4,
+    backgroundColor: Colors.secondary,
   },
 });

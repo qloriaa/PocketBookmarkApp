@@ -35,8 +35,8 @@ const Register = () => {
       await register(name, email, password);
       // Login successful info for debugging
       console.log("New Account Created", { email, password });
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -91,7 +91,7 @@ const Register = () => {
           <ThemedText style={{ color: "#f2f2f2" }}>Create New User</ThemedText>
         </ThemedButton>
 
-        <Link href="login">
+        <Link href="login" style={{ alignSelf: "center", paddingTop: 15}} >
           <ThemedText> Back to Login</ThemedText>
         </Link>
       </ThemedView>

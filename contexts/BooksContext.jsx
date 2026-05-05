@@ -15,38 +15,76 @@ export const BooksContext = createContext();
 
 export function BooksProvider({ children }) {
   // State to manage books data
+  
+  const [library, setLibrary] = useState([]);
   const [books, setBooks] = useState([]);
   const { user } = useUser();
 
   // GET ALL BOOKS
   async function fetchBooks(sortByOption) {
-    try {
-      const booksList = await databases.listDocuments(
-        DATABASE_ID,
-        BOOKS_COLLECTION_ID,
-        // Only fetch books belonging to the logged-in user
-        [Query.equal("userId", user.$id), Query.orderAsc(sortByOption)],
-      );
-      setBooks(booksList.documents);
-    } catch (error) {
-      console.error("Error fetching books:", error);
+    if (sortByOption === "title" || sortByOption === "author") {
+      try {
+        const booksList = await databases.listDocuments(
+          DATABASE_ID,
+          BOOKS_COLLECTION_ID,
+          // Only fetch books belonging to the logged-in user
+          [Query.equal("userId", user.$id), Query.orderAsc(sortByOption)],
+        );
+        setBooks(booksList.documents);
+        setLibrary(booksList.documents);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      }
+    } else {
+      try {
+        const booksList = await databases.listDocuments(
+          DATABASE_ID,
+          BOOKS_COLLECTION_ID,
+          // Only fetch books belonging to the logged-in user
+          [Query.equal("userId", user.$id), Query.orderDesc(sortByOption)],
+        );
+        setBooks(booksList.documents);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      }
     }
   }
   // GET BOOKS BY BOOKSHELF
-  async function fetchBookByBookshelf(bookshelf, sortByOption ) {
-    try {
-      const booksList = await databases.listDocuments(
-        DATABASE_ID,
-        BOOKS_COLLECTION_ID,
-        // Fetch books by bookshelf and belonging to the logged-in user
-        [Query.equal("bookshelf", bookshelf), Query.equal("userId", user.$id), Query.orderAsc(sortByOption)],
-      );
-      setBooks(booksList.documents);
-    } catch (error) {
-      console.error("Error fetching books by bookshelf:", error);
+  async function fetchBookByBookshelf(bookshelf, sortByOption) {
+    if (sortByOption === "title" || sortByOption === "author") {
+      try {
+        const booksList = await databases.listDocuments(
+          DATABASE_ID,
+          BOOKS_COLLECTION_ID,
+          // Fetch books by bookshelf and belonging to the logged-in user
+          [
+            Query.equal("bookshelf", bookshelf),
+            Query.equal("userId", user.$id),
+            Query.orderAsc(sortByOption),
+          ],
+        );
+        setBooks(booksList.documents);
+      } catch (error) {
+        console.error("Error fetching books by bookshelf:", error);
+      }
+    } else {
+      try {
+        const booksList = await databases.listDocuments(
+          DATABASE_ID,
+          BOOKS_COLLECTION_ID,
+          // Fetch books by bookshelf and belonging to the logged-in user
+          [
+            Query.equal("bookshelf", bookshelf),
+            Query.equal("userId", user.$id),
+            Query.orderDesc(sortByOption),
+          ],
+        );
+        setBooks(booksList.documents);
+      } catch (error) {
+        console.error("Error fetching books by bookshelf:", error);
+      }
     }
   }
-
 
   // GET BOOK BY ID
   async function fetchBookById(bookId) {
@@ -157,12 +195,13 @@ export function BooksProvider({ children }) {
     <BooksContext.Provider
       value={{
         books,
+        library,
         fetchBooks,
         fetchBookById,
         createBook,
         updateBook,
         deleteBook,
-        fetchBookByBookshelf, 
+        fetchBookByBookshelf,
       }}
     >
       {children}

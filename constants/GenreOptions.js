@@ -82,6 +82,7 @@ export const GenreOptions = {
   Vampires: "Vampires",
   Werewolves: "Werewolves",
   Magic: "Magic",
+  Psychological: "Psychological",
 };
 
 const sortedGenres = Object.values(GenreOptions).sort();

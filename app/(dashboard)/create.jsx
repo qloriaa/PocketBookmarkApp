@@ -1,18 +1,13 @@
 // React and Expo imports
-import {
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { MultipleSelectList } from "react-native-dropdown-select-list";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { StyleSheet, Appearance, ScrollView } from "react-native";
+import { useRouter, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 
-// Contexts and Hooks imports
-import { useBooks } from "../../hooks/UseBooks";
-import { AllGenres } from "../../constants/GenreOptions";
+import { MultipleSelectList } from "react-native-dropdown-select-list";
+import { MultiSelect } from "react-native-element-dropdown";
+
+import DropDownPicker from "react-native-dropdown-picker";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 // Themed components
 import Spacer from "../../components/Spacer";
@@ -21,8 +16,16 @@ import ThemedText from "../../components/ThemedText";
 import ThemedTextInput from "../../components/ThemedTextInput";
 import ThemedButton from "../../components/ThemedButton";
 import { Colors } from "../../constants/Colors";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+
+// Contexts and Hooks imports
+import { useBooks } from "../../hooks/UseBooks";
+import { AllGenres } from "../../constants/GenreOptions";
 
 const Create = () => {
+  const colorScheme = Appearance.getColorScheme();
+  const theme = Colors[colorScheme] ?? Colors.light;
+
   // Form state variables
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -31,9 +34,8 @@ const Create = () => {
 
   // initialize genre list
   const [genres, setGenres] = useState([]);
-
-  const [loading, setLoading] = useState(false);
-  const { createBook } = useBooks();
+  const [loading, setLoading] = useState(false); 
+  const { createBook } = useBooks(); 
   const router = useRouter();
 
   // Handle form submission
@@ -75,13 +77,13 @@ const Create = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <>
       <ThemedView style={styles.container} safe={true}>
         <ThemedText title={true} style={styles.title}>
           Add Book to Library
         </ThemedText>
 
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView keyboardDismissMode="interactive">
           <ScrollView
             contentContainerStyle={styles.ScrollViewContent}
             showsVerticalScrollIndicator={false}
@@ -117,28 +119,53 @@ const Create = () => {
               placeholder="Description"
               value={description}
               onChangeText={setDescription}
-              style={styles.multiline}
+              style={[styles.input, { minHeight: 100 }]}
               multiline={true}
             />
             <Spacer />
-          </ScrollView>
-          <ThemedText style={styles.dataTitle}>Genre(s) : </ThemedText>
-          <ThemedView
-            style={[styles.input, { paddingHorizontal: 20, paddingTop: 20 }]}
-          >
+            <ThemedText style={styles.dataTitle}>Genre(s) : </ThemedText>
+
+            {/* MultipleSelectList component for selecting multiple genres 
             <MultipleSelectList
               setSelected={(value) => setGenres(value)}
               data={AllGenres.map((genre) => ({ key: genre, value: genre }))}
               save="value"
               placeholder="Select Genre(s)"
-              onSelect={() => console.log(genres)}
-              defaultOptions={[]}
+              onSelect={() => console.log(genres)} // debugging: log selected genres
+              defaultOption={genres.length === 0 ? null : undefined}
               // Style selected options
-              boxStyles={{ borderRadius: 5, borderColor: Colors.border }}
-              badgeStyles={{ backgroundColor: Colors.primary }}
-              labelStyles={{ color: Colors.text }}
+              badgeStyles={{ backgroundColor: Colors.primary }} // Selected bubble background color
+              checkBoxStyles={{ backgroundColor: "white" }}
+              dropdownTextStyles={{ color: theme.text }}
+              inputStyles={{ color: theme.text }}
             />
-          </ThemedView>
+*/}
+
+            <MultiSelect
+              search={true}
+              data={AllGenres.map((genre) => ({
+                label: genre,
+                value: genre,
+              }))}
+              labelField="label"
+              valueField="value"
+              placeholder="Select Genres"
+              placeholderStyle={{ color: Colors.navBackground }}
+              searchPlaceholder="search.."
+              value={genres}
+              valueTextStyle={{ color: theme.text }}
+              onChange={(value) => setGenres(value)}
+              dropdownPosition="auto"
+              mode="modal"
+              style={[
+                styles.dropdown,
+                { backgroundColor: theme.uiBackground, paddingBottom: "10%" },
+              ]}
+
+              b
+            />
+          </ScrollView>
+
           <Spacer />
           <ThemedButton onPress={handleSubmit} disabled={loading}>
             <ThemedText style={{ color: "#f2f2f2" }}>
@@ -147,7 +174,7 @@ const Create = () => {
           </ThemedButton>
         </KeyboardAwareScrollView>
       </ThemedView>
-    </TouchableWithoutFeedback>
+    </>
   );
 };
 
@@ -164,17 +191,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  input: {
-    width: "90%",
+  dropdown: {
     alignSelf: "stretch",
     marginHorizontal: 20,
     padding: 15,
     borderRadius: 5,
   },
-  multiline: {
+  input: {
     padding: 10,
     borderRadius: 5,
-    minHeight: 100,
     alignSelf: "stretch",
     marginHorizontal: 20,
   },

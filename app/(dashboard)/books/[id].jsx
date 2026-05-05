@@ -7,9 +7,6 @@ import React, { useEffect, useState, useCallback} from "react";
 import { useFocusEffect } from "expo-router";
 
 
-// import Components and Hooks
-import { useBooks } from "../../../hooks/UseBooks";
-
 // Themed Components
 import { Colors } from "../../../constants/Colors";
 import ThemedText from "../../../components/ThemedText";
@@ -18,6 +15,9 @@ import ThemedCard from "../../../components/ThemedCard";
 import ThemedView from "../../../components/ThemedView";
 import Spacer from "../../../components/Spacer";
 import ThemedLoader from "../../../components/ThemedLoader";
+
+// import Components and Hooks
+import { useBooks } from "../../../hooks/UseBooks";
 
 const BookDetails = () => {
   const [book, setBook] = useState(null);
@@ -43,6 +43,7 @@ const BookDetails = () => {
     }, [id])
   );
 
+  // Book not found
   if (!book) {
     return (
       <ThemedView safe={true} style={styles.container}>
@@ -56,7 +57,7 @@ const BookDetails = () => {
         <ThemedText title={true} style={styles.pageTitle}>
           Book Details
         </ThemedText>
-        <ThemedCard style={styles.card}>
+        <ThemedCard>
           <ThemedText style={styles.bookTitle}> {book.title} </ThemedText>
           <Spacer height={15} />
           <ThemedText> Written by {book.author} </ThemedText>
@@ -130,17 +131,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
-  },
-  card: {
-    margin: 20,
-    width: "90%",
-    marginHorizontal: "5%",
-    marginVertical: 10,
-    padding: 10,
-    paddingLeft: 14,
-    borderLeftColor: Colors.primary,
-    borderLeftWidth: 4,
-    backgroundColor: Colors.secondary,
   },
   bookTitle: {
     fontSize: 15,

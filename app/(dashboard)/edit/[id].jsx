@@ -141,13 +141,13 @@ const Edit = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <>
       <ThemedView style={styles.container} safe={true}>
         <ThemedText title={true} style={styles.title}>
           Update Book Details
         </ThemedText>
 
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView keyboardDismissMode="interactive">
           <ScrollView
             contentContainerStyle={styles.ScrollViewContent}
             showsVerticalScrollIndicator={false}
@@ -258,7 +258,7 @@ const Edit = () => {
           </ThemedButton>
         </KeyboardAwareScrollView>
       </ThemedView>
-    </TouchableWithoutFeedback>
+    </>
   );
 };
 

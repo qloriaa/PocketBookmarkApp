@@ -3,9 +3,6 @@ import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native"
 import { useState } from "react"
 import { Link } from "expo-router"
 
-// Components and Hooks imports
-import { useUser } from "../../hooks/UseUser"
-
 //Themed Components
 import ThemedView from "../../components/ThemedView"
 import ThemedText from "../../components/ThemedText"
@@ -15,16 +12,19 @@ import ThemedButton from "../../components/ThemedButton"
 import ThemedTextInput from "../../components/ThemedTextInput"
 import { Colors } from "../../constants/Colors"
 
+// Components and Hooks imports
+import { useUser } from "../../hooks/UseUser"
+
 const Login = () => {
   // Hooks to get/set current user information
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   // State to handle and display login errors
-  const [error, setError] = useState(null)
+  const [error, setError] = useState(null);
 
   // Hook to access login function from useUser (UserContext)
-  const { login } = useUser()
+  const { login } = useUser();
 
   const handleSubmit = async () => {
     // reset error every time user tries to submit
@@ -32,10 +32,10 @@ const Login = () => {
 
     try {
       await login(email, password)
-    } catch (error) {
-      setError(error.message)
+    } catch (err) {
+      setError(err.message)
     }
-  }
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -64,26 +64,34 @@ const Login = () => {
           placeholder="Password"
           onChangeText={setPassword}
           value={password}
-          /*secureTextEntry*/
+          secureTextEntry
         />
 
         <Spacer />
-        {error && <Text style={styles.error}> {error} </Text>} 
-        
+        {error && (
+          <ThemedText // Display error message if registration fails
+            style={styles.error}
+          >
+            {error}
+          </ThemedText>
+        )}
+
         <ThemedButton onPress={handleSubmit}>
           <ThemedText style={{ color: "#f2f2f2" }}>Login </ThemedText>
         </ThemedButton>
 
-        <Link href="register">
+        <Link href="register" style={{ alignSelf: "center", paddingTop: 15 }}>
           <ThemedText> New User </ThemedText>
         </Link>
-
+          {/*
         <Link href="/">
           <ThemedText> Home </ThemedText>
-        </Link>
+        </Link> */}
+
       </ThemedView>
+    
     </TouchableWithoutFeedback>
-  )
+  );
 }
 
 export default Login;

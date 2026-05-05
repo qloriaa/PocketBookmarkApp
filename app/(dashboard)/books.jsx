@@ -1,8 +1,9 @@
 // React and Expo imports
-import { StyleSheet, FlatList, Pressable, View } from "react-native";
+import { StyleSheet, FlatList, Pressable, View, Appearance } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useState, useCallback, use } from "react";
 
+import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 
 // Contexts and Hooks
@@ -14,16 +15,24 @@ import Spacer from "../../components/Spacer";
 import ThemedView from "../../components/ThemedView";
 import ThemedText from "../../components/ThemedText";
 import ThemedCard from "../../components/ThemedCard";
+import ThemedButton from "../../components/ThemedButton";
 
 //
 
 const Books = () => {
+  const colorScheme = Appearance.getColorScheme();
+  const theme = Colors[colorScheme] ?? Colors.light;
+
   const { books, fetchBookByBookshelf, fetchBooks } = useBooks();
   const router = useRouter();
 
   const [bookshelf, setBookshelf] = useState("ALL");
   const [sortByOption, setSortByOption] = useState("title");
+  const [searchTerm, setSearchTerm] = useState("");
 
+  const searchBooks = async () => {
+    await search(searchTerm);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -38,7 +47,6 @@ const Books = () => {
     }, [bookshelf, sortByOption]),
   );
 
-
   return (
     <ThemedView style={styles.container} safe={true}>
       <ThemedText title={true} style={styles.pageTitle}>
@@ -47,7 +55,7 @@ const Books = () => {
 
       <View style={styles.pickerContainer}>
         <Picker
-          style={styles.picker}
+          style={[styles.picker, { color: theme.text }]}
           selectedValue={bookshelf}
           onValueChange={(bookshelf) => setBookshelf(bookshelf)}
         >
@@ -58,17 +66,23 @@ const Books = () => {
         </Picker>
 
         <Picker
-          style={styles.picker}
+          style={[styles.picker, { color: theme.text,  }]}
           selectedValue={sortByOption}
           onValueChange={(sort) => setSortByOption(sort)}
         >
-          <Picker.Item label= "Title (A-Z)" value="title" />
+          <Picker.Item label="Title (A-Z)" value="title" />
           <Picker.Item label="Author (A-Z)" value="author" />
           <Picker.Item label="Last Added" value="$createdAt" />
           <Picker.Item label="Last Updated" value="$updatedAt" />
         </Picker>
 
+        {/*<Button title="Search" onPress={searchBooks}>
+          <ThemedText>
+            Search
+          </ThemedText>
+        </Button>
 
+        */}
       </View>
 
       <FlatList
@@ -77,12 +91,9 @@ const Books = () => {
         contentContainerStyle={styles.list}
         renderItem={({ item: book }) => (
           <Pressable onPress={() => router.push(`/books/${book.$id}`)}>
-            <ThemedCard style={styles.card}>
+            <ThemedCard>
               <ThemedText style={styles.bookTitle}>{book.title}</ThemedText>
-              <ThemedText style={styles.cardAuthor}>
-                {" "}
-                - Written by {book.author}
-              </ThemedText>
+              <ThemedText> - Written by {book.author}</ThemedText>
             </ThemedCard>
           </Pressable>
         )}
@@ -105,17 +116,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  card: {
-    width: "90%",
-    marginHorizontal: "5%",
-    marginVertical: 10,
-    padding: 10,
-    paddingLeft: 15,
-    paddingBottom: 15,
-    borderLeftColor: Colors.primary,
-    borderLeftWidth: 4,
-    backgroundColor: Colors.secondary,
-  },
+
   bookTitle: {
     fontSize: 15,
     fontWeight: "bold",
@@ -124,15 +125,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   pickerContainer: {
-    flexDirection: 'row', // Aligns children horizontally
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
+    flexDirection: "row", // Aligns children horizontally
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    width: "100%",
   },
   picker: {
     width: "35%",
     alignSelf: "stretch",
-    marginHorizontal: 20,
+    marginHorizontal: 5,
     borderRadius: 5,
     backgroundColor: Colors.inputBackground,
     textColor: Colors.primary,
